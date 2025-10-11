@@ -8,6 +8,6 @@ export class SchedulerController {
 
     @Post()
     async scheduleNotification(@Body(new ValidationPipe()) frequencySettings: frequencySettingsDto) {
-        return this.schedulerService.calculateDelay(frequencySettings);
+        return { firstNotificationDelay: this.schedulerService.calculateDelayForFirstNotification(frequencySettings), nextNotificationDelay: this.schedulerService.calculateDelayForNextNotification(frequencySettings) };
     }
 }
