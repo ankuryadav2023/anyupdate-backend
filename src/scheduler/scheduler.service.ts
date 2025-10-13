@@ -1,11 +1,13 @@
+import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
+import { Queue } from 'bullmq';
 import { CronJob } from 'cron';
 import { frequencySettingsDto } from 'src/dto/scheduler.dto';
 
 @Injectable()
 export class SchedulerService {
-    constructor(private schedulerRegistry: SchedulerRegistry) { }
+    constructor(private schedulerRegistry: SchedulerRegistry, @InjectQueue('notifications-queue') private notificationsQueue: Queue) { }
 
     calculateDelayForFirstNotification(frequencySettings: frequencySettingsDto) {
         let startYear = Number(frequencySettings.startDate.split('-')[0]);
@@ -141,5 +143,9 @@ export class SchedulerService {
 
         const currentDate = new Date();
         return nextNotificationDate.getTime() - currentDate.getTime();
+    }
+
+    async scheduleNotification(frequencySettings: frequencySettingsDto, delay: number) {
+        await this.notificationsQueue.add('notifications-queue', {}, { delay });
     }
 }
