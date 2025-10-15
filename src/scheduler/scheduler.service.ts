@@ -146,6 +146,6 @@ export class SchedulerService {
     }
 
     async scheduleNotification(frequencySettings: frequencySettingsDto, delay: number) {
-        await this.notificationsQueue.add('notifications-queue', {}, { delay });
+        await this.notificationsQueue.add('notification', {}, { delay });
     }
 }
